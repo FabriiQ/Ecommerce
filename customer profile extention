@@ -1,0 +1,82 @@
+Based on the provided documentation and codebase, Medusa.js does not provide built-in product rating and reviews functionality out of the box. This is not part of the core product module or any other standard modules.
+
+From reviewing the Product Module documentation (`/packages/modules/product/README.md`), we can see that the product module primarily focuses on:
+- Products
+- Variants 
+- Categories
+- Basic product information management
+
+To implement product ratings and reviews, you would need to:
+
+1. Create a custom module or extend the existing product module
+2. Create new database tables/models for:
+   - Reviews
+   - Ratings
+   - Review metadata (like user info, timestamps etc)
+
+Here's a high-level approach to implement this:
+
+1. Create a custom reviews module:
+```typescript
+// Example structure for a custom reviews module
+interface ProductReview {
+  id: string
+  product_id: string
+  user_id: string
+  rating: number // e.g. 1-5
+  comment: string
+  created_at: Date
+  updated_at: Date
+}
+
+class ReviewService {
+  async create(data: CreateReviewInput) {
+    // Implementation
+  }
+
+  async list(productId: string) {
+    // Implementation
+  }
+
+  async getAverageRating(productId: string) {
+    // Implementation
+  }
+}
+```
+
+2. Link it with the Product module:
+```typescript
+// Extend product retrieval to include reviews
+const product = await productService.retrieve(productId, {
+  relations: ['reviews'] // You'll need to set up this relation
+})
+```
+
+3. Create necessary API endpoints:
+```typescript
+// Example API route
+router.post('/store/products/:id/reviews', (req, res) => {
+  // Handle review creation
+})
+
+router.get('/store/products/:id/reviews', (req, res) => {
+  // Handle fetching reviews
+})
+```
+
+Since this functionality isn't built-in, you have the flexibility to implement it according to your specific needs. You could also consider:
+
+1. Using a third-party review service and integrating it
+2. Building a separate microservice for reviews
+3. Creating a plugin for Medusa that handles reviews
+
+The product module's current beta state focuses primarily on retrieving products, as mentioned in the documentation:
+
+> The Product Module is currently in beta. The beta version comes with limited functionality, primarily centered around retrieving products.
+
+For a complete review system, you'd need to handle:
+- User authentication for reviewers
+- Review moderation
+- Rating calculations
+- Review filtering and sorting
+- Review metadata (verified purchases, helpful votes, etc)
